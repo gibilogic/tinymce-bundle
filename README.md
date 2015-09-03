@@ -74,10 +74,14 @@ If you want to use jQuery version of the editor set the following parameters:
 
 ```yaml
     stfalcon_tinymce:
+        include_assets: true
         include_jquery: true
         tinymce_jquery: true
         ...
 ```
+
+The option `include_assets` allows you to controle if assets (jQuery and TinyMCE)
+must be loaded. Set it to `false` if you include theme already by yourself.
 
 The option `include_jquery` allows you to load external jQuery library from the Google CDN. Set it to `true` if you haven't included jQuery on your page.
 

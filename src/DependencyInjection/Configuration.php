@@ -24,6 +24,8 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder
             ->root('stfalcon_tinymce', 'array')
                 ->children()
+                    // Include assets (jquery, TinyMCE)
+                    ->booleanNode('include_assets')->defaultTrue()->end()
                     // Include jQuery (true) library or not (false)
                     ->booleanNode('include_jquery')->defaultFalse()->end()
                     // Use jQuery (true) or standalone (false) build of the TinyMCE

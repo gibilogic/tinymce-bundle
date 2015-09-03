@@ -26,6 +26,8 @@ class StfalconTinymceExtension extends \Twig_Extension
      */
     protected $baseUrl;
 
+    protected $include_assets;
+
     /**
      * Initialize tinymce helper
      *
@@ -34,6 +36,8 @@ class StfalconTinymceExtension extends \Twig_Extension
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $config = $container->getParameter('stfalcon_tinymce.config');
+        $this->include_assets = $config['include_assets'];
     }
 
     /**
@@ -68,7 +72,8 @@ class StfalconTinymceExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'tinymce_init' => new \Twig_Function_Method($this, 'tinymceInit', array('is_safe' => array('html')))
+            'tinymce_init' => new \Twig_Function_Method($this, 'tinymceInit', array('is_safe' => array('html'))),
+            'tinymce_assets' => new \Twig_Function_Method($this, 'tinymceAssets', array('is_safe' => array('html')))
         );
     }
 
@@ -166,6 +171,31 @@ class StfalconTinymceExtension extends \Twig_Extension
                 '/"file_browser_callback":"([^"]+)"\s*/', 'file_browser_callback:$1',
                 json_encode($config)
             ),
+        ));
+    }
+
+    /**
+     * TinyMce assets
+     *
+     * @param array $options which can be used to overwrite the global configuration on call
+     *
+     * @return string
+     */
+    public function tinymceAssets($options = array())
+    {
+        if(!$this->include_assets) {
+            return "";
+        }
+
+        $config = $this->getParameter('stfalcon_tinymce.config');
+        $config = array_replace_recursive($config, $options);
+
+        $this->baseUrl = (!isset($config['base_url']) ? null : $config['base_url']);
+
+        // Load assets once is enough
+        $this->include_assets = false;
+
+        return $this->getService('templating')->render('StfalconTinymceBundle:Script:assets.html.twig', array(
             'include_jquery' => $config['include_jquery'],
             'tinymce_jquery' => $config['tinymce_jquery'],
             'base_url'       => $this->baseUrl
