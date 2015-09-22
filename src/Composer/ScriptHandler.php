@@ -2,54 +2,28 @@
 
 namespace Stfalcon\Bundle\TinymceBundle\Composer;
 
-use Composer\Script\Event;
-use Composer\Composer;
+use Composer\Script\CommandEvent;
+use Sensio\Bundle\DistributionBundle\Composer\ScriptHandler as BaseScriptHandler;
 
 /**
  * Class ScriptHandler.
  *
  * @package Stfalcon\Bundle\TinymceBundle\Composer
  */
-class ScriptHandler
+class ScriptHandler extends BaseScriptHandler
 {
-    const TINYMCE_PACKAGE_NAME = 'tinymce/tinymce';
-
     /**
-     * @param \Composer\Script\Event $event
+     * @param \Composer\Script\CommandEvent $event
      */
-    public static function createSymlink(Event $event)
+    public static function createSymlink(CommandEvent $event)
     {
-        $localPath = sprintf('%s/../Resources/public/vendor/tinymce', __DIR__);
-        if (is_link($localPath)) {
+        $options = self::getOptions($event);
+        $consoleDir = self::getConsoleDir($event, 'hello world');
+
+        if (null === $consoleDir) {
             return;
         }
 
-        $tinymceFilePath = self::getPackageInstallationPath($event->getComposer(), self::TINYMCE_PACKAGE_NAME);
-        if (!symlink($tinymceFilePath, $localPath)) {
-            throw new \RuntimeException("Unable to create the symlink '$localPath' to the folder '$tinymceFilePath'");
-        }
-    }
-
-    /**
-     * @param \Composer\Composer $composer
-     * @param string $packageName
-     * @return string
-     *
-     * @throws \RuntimeException
-     */
-    protected static function getPackageInstallationPath(Composer $composer, $packageName)
-    {
-        /* @var \Composer\Repository\PackageRepository $repoManager */
-        $repoManager = $composer->getRepositoryManager();
-
-        /* @var \Composer\Installer\InstallationManager $installManager */
-        $installManager = $composer->getInstallationManager();
-
-        $package = $repoManager->findPackage($packageName, '*');
-        if (empty($package)) {
-            throw new \RuntimeException("Unable to find the '$packageName' package.");
-        }
-
-        return $installManager->getInstallPath($package);
+        static::executeCommand($event, $consoleDir, 'stfalcon:tinymce:symlink', $options['process-timeout']);
     }
 }

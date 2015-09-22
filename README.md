@@ -18,10 +18,10 @@ Add TinyMCE automatic symlinking
 
     "scripts": {
 	"post-install-cmd": [
-	    "Stfalcon\\Bundle\\TinymceBundle\\Composer\\ScriptHandler::postInstallSymlinkTinymce"
+	    "Stfalcon\\Bundle\\TinymceBundle\\Composer\\ScriptHandler::createSymlink"
 	],
 	"post-update-cmd": [
-	    "Stfalcon\\Bundle\\TinymceBundle\\Composer\\ScriptHandler::postInstallSymlinkTinymce"
+	    "Stfalcon\\Bundle\\TinymceBundle\\Composer\\ScriptHandler::createSymlink"
 	]
     },
 
@@ -59,6 +59,9 @@ You can also override the default configuration by passing an option like this:
 ```twig
     {{ tinymce_init({'use_callback_tinymce_init': true, 'theme': {'simple': {'menubar': false}}}) }}
 ```
+
+This function allow a second parameter that let you chose if the given configuration must replace the orignal configuration or be merged it. `True` will replace, `False` will merge (default: `false`).
+
 
 ## Base configuration
 

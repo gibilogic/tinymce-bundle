@@ -72,8 +72,8 @@ class StfalconTinymceExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'tinymce_init' => new \Twig_Function_Method($this, 'tinymceInit', array('is_safe' => array('html'))),
-            'tinymce_assets' => new \Twig_Function_Method($this, 'tinymceAssets', array('is_safe' => array('html')))
+            new \Twig_SimpleFunction('tinymce_init', array($this, 'tinymceInit'), array('is_safe' => array('html')))
+            new \Twig_SimpleFunction('tinymce_assets', array($this, 'tinymceAssets'), array('is_safe' => array('html')))
         );
     }
 
@@ -83,10 +83,14 @@ class StfalconTinymceExtension extends \Twig_Extension
      * @param array $options
      * @return string
      */
-    public function tinymceInit($options = array())
+    public function tinymceInit($options = array(), $replace = false)
     {
         $config = $this->getParameter('stfalcon_tinymce.config');
-        $config = array_merge_recursive($config, $options);
+        if ($replace) {
+            $config = array_replace_recursive($config, $options);
+        } else {
+            $config = array_merge_recursive($config, $options);
+        }
 
         $this->baseUrl = (!isset($config['base_url']) ? null : $config['base_url']);
         /** @var $assets \Symfony\Component\Templating\Helper\CoreAssetsHelper */
